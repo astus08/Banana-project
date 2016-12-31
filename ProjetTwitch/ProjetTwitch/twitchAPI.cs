@@ -20,7 +20,7 @@ namespace projetTwitch
         public string getURL(string type)
         {
             string baseURL = "https://api.twitch.tv/kraken/";
-            string[] listTypes = { "teams", "channels", "games", "users", "streams", "search"};
+            string[] listTypes = { "teams", "channels", "games", "users", "streams", "search" };
             string[] listURL = { baseURL + "teams/",
                                  baseURL + "channels/",
                                  baseURL + "games/",
