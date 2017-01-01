@@ -41,7 +41,13 @@ namespace projetTwitch
         public bool isOnline(string streamer)
         {
             WebClient client = new WebClient();
-            string myURL = getURL("streams") + streamer + "?" + this.clientID;
+            string baseURL = getURL("streams");
+            string myURL;
+            if (baseURL != null) {
+                myURL = baseURL + streamer + "?" + this.clientID;
+            } else {
+                return false;
+            }
             string chaine = client.DownloadString(myURL);
             var m_data = JsonConvert.DeserializeObject<dynamic>(chaine);
             if (m_data.stream != null)
@@ -53,5 +59,59 @@ namespace projetTwitch
                 return false;
             }
         }
+
+        public List<streamer> getFollowedStreams(string user)
+        {
+            WebClient client = new WebClient();
+            string baseURL = getURL("users");
+            string myURL;
+            if (baseURL != null)
+            {
+                myURL = baseURL + user + "/follows/channels?" + this.clientID;
+            }
+            else
+            {
+                return new List<streamer>();
+            }
+
+            string chaine;
+            try {
+                chaine = client.DownloadString(myURL);
+            } catch (WebException) {
+                return new List<streamer>();
+            }
+
+            var m_data = JsonConvert.DeserializeObject<dynamic>(chaine);
+
+            List<streamer> followedStreams = new List<streamer>();
+
+            foreach (var obj in m_data.follows)
+            {
+                streamer target = new streamer(obj.channel.name.ToString(), obj.channel.display_name.ToString());
+                Console.WriteLine(target.ToString());
+                followedStreams.Add(target);
+            }
+
+            return followedStreams;
+        }
+    }
+
+    class streamer
+    {
+        public String name { get; set; }
+        public String displayName { get; set; }
+
+        public streamer(String name, String displayName)
+        {
+            this.name = name;
+            this.displayName = displayName;
+        }
+
+        public override string ToString()
+        {
+            String returnValue = this.name + " aka " + this.displayName;
+            return returnValue;
+        }
+
     }
 }
