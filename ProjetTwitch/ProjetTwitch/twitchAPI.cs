@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace projetTwitch
 {
@@ -38,25 +39,19 @@ namespace projetTwitch
             }
         }
 
-        public bool isOnline(string streamer)
+        public void isOnline(streamer stream)
         {
             WebClient client = new WebClient();
-            string baseURL = getURL("streams");
-            string myURL;
-            if (baseURL != null) {
-                myURL = baseURL + streamer + "?" + this.clientID;
-            } else {
-                return false;
-            }
+            string myURL = getURL("streams") + stream.name + "?" + this.clientID;
             string chaine = client.DownloadString(myURL);
             var m_data = JsonConvert.DeserializeObject<dynamic>(chaine);
             if (m_data.stream != null)
             {
-                return true;
+                stream.State = true;
             }
             else
             {
-                return false;
+                stream.State = false;
             }
         }
 
@@ -88,7 +83,6 @@ namespace projetTwitch
             foreach (var obj in m_data.follows)
             {
                 streamer target = new streamer(obj.channel.name.ToString(), obj.channel.display_name.ToString());
-                Console.WriteLine(target.ToString());
                 followedStreams.Add(target);
             }
 
@@ -100,11 +94,30 @@ namespace projetTwitch
     {
         public String name { get; set; }
         public String displayName { get; set; }
+        public bool state = false;
+        public bool stateHasChanged { get; set; }
+        public string link { get; set; }
 
+        public bool State{
+            get {
+                return state;
+            }
+            set {
+                if (value==true && state == false)
+                {
+                    this.stateHasChanged = true;
+                }
+                state = value;
+            }
+        }
+        
         public streamer(String name, String displayName)
         {
             this.name = name;
             this.displayName = displayName;
+            this.state = true;
+            this.stateHasChanged = false;
+            this.link = "www.twitch.tv/" + name;
         }
 
         public override string ToString()
