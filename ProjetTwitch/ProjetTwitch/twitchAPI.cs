@@ -42,16 +42,23 @@ namespace projetTwitch
         {
             WebClient client = new WebClient();
             string myURL = getURL("streams") + stream.name + "?" + this.clientID;
-            string chaine = client.DownloadString(myURL);
-            var m_data = JsonConvert.DeserializeObject<dynamic>(chaine);
-            if (m_data.stream != null)
+            try
             {
-                stream.State = true;
-            }
-            else
+                string chaine = client.DownloadString(myURL);
+                var m_data = JsonConvert.DeserializeObject<dynamic>(chaine);
+                if (m_data.stream != null)
+                {
+                    stream.State = true;
+                }
+                else
+                {
+                    stream.State = false;
+                }
+            } catch (WebException)
             {
-                stream.State = false;
+                Console.WriteLine("Server error : " + stream.ToString());
             }
+            
         }
 
         public List<streamer> getFollowedStreams(string user)
