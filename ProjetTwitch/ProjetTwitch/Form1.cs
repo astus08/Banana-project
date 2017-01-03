@@ -18,6 +18,7 @@ namespace ProjetTwitch
         private bool state = false;
         delegate void myCallback(string text, List<streamer> followedStreams);
         private streamer streamerTmpNotif;
+        private int delayLenght;
 
         public Form1()
         {
@@ -28,10 +29,17 @@ namespace ProjetTwitch
         {
             if (state) {
                 state = false;
+                nameBox.Enabled = true;
+                delayBox.Enabled = true;
+                validateButton.Text = "Start";
             } else if (delayBox.Text != "" && nameBox.Text != "") {
                 state = true;
+                delayLenght = Int32.Parse(delayBox.Text);
                 Thread thread = new Thread(this.callForScan);
                 thread.Start(nameBox.Text);
+                nameBox.Enabled = false;
+                delayBox.Enabled = false;
+                validateButton.Text = "Stop";
             } else {
                 MessageBox.Show("Erreur");
             }
@@ -44,7 +52,14 @@ namespace ProjetTwitch
             while (state)
             {
                 scanUserFollow((string)name, followedStreams);
-                Thread.Sleep(Int32.Parse(delayBox.Text) * 1000);
+
+                int multiplicator = 1000;
+                long refreshTime = delayLenght * multiplicator;
+                
+                for (int i=0; i < multiplicator; i++) {
+                    Thread.Sleep(delayLenght);
+                    if (!state) break;
+                }
             }
         }
 
@@ -82,6 +97,7 @@ namespace ProjetTwitch
                         streamsFolowed.Text += stream.displayName + " is now OFFLINE\n";
                     }
                 }
+                Console.WriteLine("Check");
             }
         }
 
@@ -93,6 +109,7 @@ namespace ProjetTwitch
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.Show();
+            this.WindowState = FormWindowState.Normal;
         }
 
         private void hideToolStripMenuItem_Click(object sender, EventArgs e)

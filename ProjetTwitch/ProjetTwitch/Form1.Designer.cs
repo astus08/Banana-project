@@ -16,6 +16,7 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+                this.state = false;
             }
             base.Dispose(disposing);
         }
@@ -129,15 +130,19 @@
             this.AcceptButton = this.validateButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 295);
+            this.ClientSize = new System.Drawing.Size(284, 261);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.delayBox);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.validateButton);
             this.Controls.Add(this.streamsFolowed);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(300, 500);
+            this.MinimumSize = new System.Drawing.Size(300, 300);
             this.Name = "Form1";
-            this.Text = "Twitch Online";
+            this.Text = "Is my streamer up ?";
             this.Move += new System.EventHandler(this.Form1_Move);
             this.contextMenuStrip1.ResumeLayout(false);
             this.ResumeLayout(false);
