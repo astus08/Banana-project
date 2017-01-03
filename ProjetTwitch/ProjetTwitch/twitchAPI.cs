@@ -81,7 +81,9 @@ namespace projetTwitch
 
             foreach (var obj in m_data.follows)
             {
-                streamer target = new streamer(obj.channel.name.ToString(), obj.channel.display_name.ToString());
+                streamer target = new streamer(obj.channel.name.ToString(), 
+                                               obj.channel.display_name.ToString(), 
+                                               obj.channel.url.ToString());
                 followedStreams.Add(target);
             }
 
@@ -110,13 +112,13 @@ namespace projetTwitch
             }
         }
         
-        public streamer(String name, String displayName)
+        public streamer(String name, String displayName, String link)
         {
             this.name = name;
             this.displayName = displayName;
             this.state = true;
             this.stateHasChanged = false;
-            this.link = "www.twitch.tv/" + name;
+            this.link = link;
         }
 
         public override string ToString()

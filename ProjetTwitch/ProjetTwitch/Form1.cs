@@ -88,7 +88,7 @@ namespace ProjetTwitch
                         {
                             this.Hide();
                             streamerTmpNotif = stream;
-                            notifyIcon1.ShowBalloonTip(1000, stream.displayName + " is online", "Click me to watch " + stream.displayName + " stream !", ToolTipIcon.Info);
+                            notifyIcon1.ShowBalloonTip(2000, stream.displayName + " is online", "Click me to watch " + stream.displayName + " stream !", ToolTipIcon.Info);
                             stream.stateHasChanged = false;
                         }
                     }
@@ -99,11 +99,6 @@ namespace ProjetTwitch
                 }
                 Console.WriteLine("Check");
             }
-        }
-
-        private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            System.Diagnostics.Process.Start(streamerTmpNotif.link);
         }
 
         private void showToolStripMenuItem_Click(object sender, EventArgs e)
@@ -123,6 +118,11 @@ namespace ProjetTwitch
             {
                 this.Hide();
             }
+        }
+        
+        private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(streamerTmpNotif.link);
         }
     }
 }
