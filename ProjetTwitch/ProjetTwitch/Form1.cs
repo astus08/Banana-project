@@ -16,9 +16,11 @@ namespace ProjetTwitch
     {
         private twitchAPI twitchInit = new twitchAPI("oc651hjfox0rk94wahy25hpm8d17o5");
         private bool state = false;
-        delegate void myCallback(string text, List<streamer> followedStreams);
+        delegate void myCallback(List<streamer> followedStreams);
         private streamer streamerTmpNotif;
         private int delayLenght;
+
+        private List<streamer> followedStreams;
 
         public Form1()
         {
@@ -36,9 +38,11 @@ namespace ProjetTwitch
             } else if (delayBox.Text != "" && nameBox.Text != "")
             {
                 state = true;
+                followedStreams = twitchInit.getFollowedStreams(nameBox.Text);
                 delayLenght = Int32.Parse(delayBox.Text);
+
                 Thread thread = new Thread(this.callForScan);
-                thread.Start(nameBox.Text);
+                thread.Start(followedStreams);
                 nameBox.Enabled = false;
                 delayBox.Enabled = false;
                 validateButton.Text = "Stop";
@@ -46,19 +50,21 @@ namespace ProjetTwitch
             {
                 MessageBox.Show("Error");
             }
-
         }
 
-        private void callForScan(object name)
+        private void callForScan(object followedStreamsObj)
         {
-            List<streamer> followedStreams = twitchInit.getFollowedStreams((string)name);
-            if (followedStreams.Count == 0) {
+            List<streamer> followedStreams = (List<streamer>)followedStreamsObj;
+
+            if (followedStreams.Count == 0)
+            {
                 MessageBox.Show("No streamer followed");
             }
 
+            //Thread loop starting
             while (state || followedStreams.Count == 0)
             {
-                scanUserFollow((string)name, followedStreams);
+                scanUserFollow(followedStreams);
 
                 int multiplicator = 1000;
                 long refreshTime = delayLenght * multiplicator;
@@ -71,12 +77,12 @@ namespace ProjetTwitch
             }
         }
 
-        private void scanUserFollow(string name, List<streamer> followedStreams)
+        private void scanUserFollow(List<streamer> followedStreams)
         {
             if (this.streamsFolowed.InvokeRequired)
             {
                 myCallback d = new myCallback(scanUserFollow);
-                this.Invoke(d, new object[] { name, followedStreams });
+                this.Invoke(d, new object[] { followedStreams });
             } else
             {
                 foreach (streamer stream in followedStreams)
@@ -86,9 +92,10 @@ namespace ProjetTwitch
 
                 streamsFolowed.Text = "";
 
+                int i = 0;
                 foreach (streamer stream in followedStreams)
                 {
-                    if (stream.state)
+                    if (stream.State)
                     {
                         streamsFolowed.Text += stream.displayName + " is now ONLINE\n";
                         if (stream.stateHasChanged)
@@ -102,6 +109,7 @@ namespace ProjetTwitch
                     {
                         streamsFolowed.Text += stream.displayName + " is now OFFLINE\n";
                     }
+                    i++;
                 }
                 Console.WriteLine("Check");
             }

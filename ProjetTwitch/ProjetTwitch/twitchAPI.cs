@@ -105,7 +105,7 @@ namespace projetTwitch
     {
         public String name { get; set; }
         public String displayName { get; set; }
-        public bool state = false;
+        private bool state = false;
         public bool stateHasChanged { get; set; }
         public string link { get; set; }
         public Image logo { get; set; }

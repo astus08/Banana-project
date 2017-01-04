@@ -47,7 +47,7 @@
             // streamsFolowed
             // 
             this.streamsFolowed.AutoSize = true;
-            this.streamsFolowed.Location = new System.Drawing.Point(12, 72);
+            this.streamsFolowed.Location = new System.Drawing.Point(12, 71);
             this.streamsFolowed.Name = "streamsFolowed";
             this.streamsFolowed.Size = new System.Drawing.Size(87, 13);
             this.streamsFolowed.TabIndex = 0;
