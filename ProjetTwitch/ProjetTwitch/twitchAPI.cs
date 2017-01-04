@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -90,7 +92,8 @@ namespace projetTwitch
             {
                 streamer target = new streamer(obj.channel.name.ToString(), 
                                                obj.channel.display_name.ToString(), 
-                                               obj.channel.url.ToString());
+                                               obj.channel.url.ToString(),
+                                               obj.channel.logo.ToString());
                 followedStreams.Add(target);
             }
 
@@ -105,6 +108,7 @@ namespace projetTwitch
         public bool state = false;
         public bool stateHasChanged { get; set; }
         public string link { get; set; }
+        public Image logo { get; set; }
 
         public bool State{
             get {
@@ -119,13 +123,25 @@ namespace projetTwitch
             }
         }
         
-        public streamer(String name, String displayName, String link)
+        public streamer(String name, String displayName, String link, String logo)
         {
             this.name = name;
             this.displayName = displayName;
             this.state = true;
             this.stateHasChanged = false;
             this.link = link;
+
+            //Load logo
+            using (WebClient webClient = new WebClient())
+            {
+                byte[] data = webClient.DownloadData(logo);
+
+                using (MemoryStream mem = new MemoryStream(data))
+                {
+                    this.logo = Image.FromStream(mem);
+                }
+
+            }
         }
 
         public override string ToString()

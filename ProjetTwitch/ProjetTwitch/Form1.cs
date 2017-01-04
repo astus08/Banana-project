@@ -27,12 +27,14 @@ namespace ProjetTwitch
 
         private void validateButton_Click(object sender, EventArgs e)
         {
-            if (state) {
+            if (state)
+            {
                 state = false;
                 nameBox.Enabled = true;
                 delayBox.Enabled = true;
                 validateButton.Text = "Start";
-            } else if (delayBox.Text != "" && nameBox.Text != "") {
+            } else if (delayBox.Text != "" && nameBox.Text != "")
+            {
                 state = true;
                 delayLenght = Int32.Parse(delayBox.Text);
                 Thread thread = new Thread(this.callForScan);
@@ -40,23 +42,29 @@ namespace ProjetTwitch
                 nameBox.Enabled = false;
                 delayBox.Enabled = false;
                 validateButton.Text = "Stop";
-            } else {
-                MessageBox.Show("Erreur");
+            } else
+            {
+                MessageBox.Show("Error");
             }
-            
+
         }
 
         private void callForScan(object name)
         {
             List<streamer> followedStreams = twitchInit.getFollowedStreams((string)name);
-            while (state)
+            if (followedStreams.Count == 0) {
+                MessageBox.Show("No streamer followed");
+            }
+
+            while (state || followedStreams.Count == 0)
             {
                 scanUserFollow((string)name, followedStreams);
 
                 int multiplicator = 1000;
                 long refreshTime = delayLenght * multiplicator;
-                
-                for (int i=0; i < multiplicator; i++) {
+
+                for (int i = 0; i < multiplicator; i++)
+                {
                     Thread.Sleep(delayLenght);
                     if (!state) break;
                 }
@@ -69,8 +77,7 @@ namespace ProjetTwitch
             {
                 myCallback d = new myCallback(scanUserFollow);
                 this.Invoke(d, new object[] { name, followedStreams });
-            }
-            else
+            } else
             {
                 foreach (streamer stream in followedStreams)
                 {
@@ -91,8 +98,7 @@ namespace ProjetTwitch
                             notifyIcon1.ShowBalloonTip(2000, stream.displayName + " is online", "Click me to watch " + stream.displayName + " stream !", ToolTipIcon.Info);
                             stream.stateHasChanged = false;
                         }
-                    }
-                    else
+                    } else
                     {
                         streamsFolowed.Text += stream.displayName + " is now OFFLINE\n";
                     }
@@ -119,10 +125,11 @@ namespace ProjetTwitch
                 this.Hide();
             }
         }
-        
+
         private void notifyIcon1_BalloonTipClicked(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start(streamerTmpNotif.link);
         }
+
     }
 }
