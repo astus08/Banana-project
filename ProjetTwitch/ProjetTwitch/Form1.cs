@@ -133,7 +133,7 @@ namespace ProjetTwitch
                         {
                             this.Hide();
                             streamerTmpNotif = stream;
-
+                            
                             notifyIcon1.ShowBalloonTip(2000, stream.displayName + " is online", "Click me to watch " + stream.displayName + " stream !", ToolTipIcon.Info);
                             stream.stateHasChanged = false;
                         }

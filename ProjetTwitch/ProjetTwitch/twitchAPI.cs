@@ -11,16 +11,28 @@ using System.Windows.Forms;
 
 namespace projetTwitch
 {
+    /// <summary>
+    /// Classe permettant de communiquer avec l'API de twitch
+    /// </summary>
     class twitchAPI
     {
         private string clientID;
 
+        /// <summary>
+        /// Constructeur permettant de définir la valeur de la propriété clientID 
+        /// </summary>
+        /// <param name="clientID">ID de notre API twitch</param>
         public twitchAPI(string clientID)
         {
             this.clientID = "client_id=" + clientID;
         }
 
-        public string getURL(string type)
+        /// <summary>
+        /// Retourne l'URL de l'API twitch de la catégorie indiquée
+        /// </summary>
+        /// <param name="type">Type d'information que l'on veut obtenir</param>
+        /// <returns>Url de l'API</returns>
+        private string getURL(string type)
         {
             string baseURL = "https://api.twitch.tv/kraken/";
             string[] listTypes = { "teams", "channels", "games", "users", "streams", "search" };
@@ -41,6 +53,11 @@ namespace projetTwitch
             }
         }
 
+        /// <summary>
+        /// Permet de savoir si un streamer est en ligne.
+        /// On modifie l'objet envoyé
+        /// </summary>
+        /// <param name="stream">Objet contenant les infos du streamer concerné</param>
         public void isOnline(streamer stream)
         {
             WebClient client = new WebClient();
@@ -64,6 +81,11 @@ namespace projetTwitch
             
         }
 
+        /// <summary>
+        /// Récupère la liste des chaine suivis par un utilisateur
+        /// </summary>
+        /// <param name="user">Nom de l'utilisateur à scanner</param>
+        /// <returns>Liste des streameurs suivis</returns>
         public List<streamer> getFollowedStreams(string user)
         {
             WebClient client = new WebClient();
@@ -102,6 +124,9 @@ namespace projetTwitch
         }
     }
 
+    /// <summary>
+    /// Stock les informations sur un streamer
+    /// </summary>
     class streamer
     {
         public String name { get; set; }
