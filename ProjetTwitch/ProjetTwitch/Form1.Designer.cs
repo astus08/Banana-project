@@ -31,7 +31,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
-            this.streamsFolowed = new System.Windows.Forms.Label();
             this.validateButton = new System.Windows.Forms.Button();
             this.nameBox = new System.Windows.Forms.TextBox();
             this.delayBox = new System.Windows.Forms.TextBox();
@@ -43,15 +42,6 @@
             this.hideToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // streamsFolowed
-            // 
-            this.streamsFolowed.AutoSize = true;
-            this.streamsFolowed.Location = new System.Drawing.Point(12, 71);
-            this.streamsFolowed.Name = "streamsFolowed";
-            this.streamsFolowed.Size = new System.Drawing.Size(87, 13);
-            this.streamsFolowed.TabIndex = 0;
-            this.streamsFolowed.Text = "No user selected";
             // 
             // validateButton
             // 
@@ -136,7 +126,6 @@
             this.Controls.Add(this.delayBox);
             this.Controls.Add(this.nameBox);
             this.Controls.Add(this.validateButton);
-            this.Controls.Add(this.streamsFolowed);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(300, 500);
@@ -151,8 +140,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label streamsFolowed;
         private System.Windows.Forms.Button validateButton;
         private System.Windows.Forms.TextBox nameBox;
         private System.Windows.Forms.TextBox delayBox;

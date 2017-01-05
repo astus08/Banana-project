@@ -16,10 +16,10 @@ namespace ProjetTwitch
     {
         private twitchAPI twitchInit = new twitchAPI("oc651hjfox0rk94wahy25hpm8d17o5");
         private bool state = false;
-        delegate void myCallback(List<streamer> followedStreams);
+        delegate void myCallback();
         private streamer streamerTmpNotif;
         private int delayLenght;
-
+        
         private List<streamer> followedStreams;
 
         public Form1()
@@ -35,54 +35,86 @@ namespace ProjetTwitch
                 nameBox.Enabled = true;
                 delayBox.Enabled = true;
                 validateButton.Text = "Start";
+
+                foreach(streamer stream in followedStreams) {
+                    this.Controls.Remove(stream.MyLabel);
+                }
+
+                followedStreams.Clear();
             } else if (delayBox.Text != "" && nameBox.Text != "")
             {
                 state = true;
+                nameBox.Enabled = false;
+                delayBox.Enabled = false;
                 followedStreams = twitchInit.getFollowedStreams(nameBox.Text);
                 delayLenght = Int32.Parse(delayBox.Text);
 
+                #region Create labels reccursively
+                Point actualPosition = new Point(12, 71);
+                int spaceBetweenLabels = 18;
+
+                foreach (streamer stream in followedStreams)
+                {
+                    stream.MyLabel.Location = actualPosition;
+                    stream.MyLabel.Parent = this;
+                    stream.MyLabel.AutoSize = true;
+
+                    stream.MyLabel.MouseClick += MyLabel_MouseClick;
+
+                    actualPosition.Y += spaceBetweenLabels;
+                }
+                #endregion
+                
                 Thread thread = new Thread(this.callForScan);
-                thread.Start(followedStreams);
-                nameBox.Enabled = false;
-                delayBox.Enabled = false;
+                thread.Start();
+                
                 validateButton.Text = "Stop";
             } else
             {
                 MessageBox.Show("Error");
             }
         }
-
-        private void callForScan(object followedStreamsObj)
+        
+        private void callForScan()
         {
-            List<streamer> followedStreams = (List<streamer>)followedStreamsObj;
-
             if (followedStreams.Count == 0)
             {
                 MessageBox.Show("No streamer followed");
-            }
-
-            //Thread loop starting
-            while (state || followedStreams.Count == 0)
+            } else
             {
-                scanUserFollow(followedStreams);
-
-                int multiplicator = 1000;
-                long refreshTime = delayLenght * multiplicator;
-
-                for (int i = 0; i < multiplicator; i++)
+                //Thread loop starting
+                while (state)
                 {
-                    Thread.Sleep(delayLenght);
-                    if (!state) break;
+                    scanUserFollow();
+
+                    int multiplicator = 1000;
+                    long refreshTime = delayLenght * multiplicator;
+
+                    for (int i = 0; i < multiplicator; i++)
+                    {
+                        Thread.Sleep(delayLenght);
+                        if (!state) break;
+                    }
                 }
             }
         }
 
-        private void scanUserFollow(List<streamer> followedStreams)
+        private void scanUserFollow()
         {
-            if (this.streamsFolowed.InvokeRequired)
+            bool needDlg = false;
+            foreach (streamer stream in followedStreams)
+            {
+                if (stream.MyLabel.InvokeRequired)
+                {
+                    needDlg = true;
+                    break;
+                }
+            }
+
+            if (needDlg)
             {
                 myCallback d = new myCallback(scanUserFollow);
-                this.Invoke(d, new object[] { followedStreams });
+                this.Invoke(d);
             } else
             {
                 foreach (streamer stream in followedStreams)
@@ -90,24 +122,25 @@ namespace ProjetTwitch
                     twitchInit.isOnline(stream);
                 }
 
-                streamsFolowed.Text = "";
-
                 int i = 0;
                 foreach (streamer stream in followedStreams)
                 {
                     if (stream.State)
                     {
-                        streamsFolowed.Text += stream.displayName + " is now ONLINE\n";
+                        stream.MyLabel.Text = stream.displayName + " is now ONLINE";
+                        stream.MyLabel.ForeColor = Color.Green;
                         if (stream.stateHasChanged)
                         {
                             this.Hide();
                             streamerTmpNotif = stream;
+
                             notifyIcon1.ShowBalloonTip(2000, stream.displayName + " is online", "Click me to watch " + stream.displayName + " stream !", ToolTipIcon.Info);
                             stream.stateHasChanged = false;
                         }
                     } else
                     {
-                        streamsFolowed.Text += stream.displayName + " is now OFFLINE\n";
+                        stream.MyLabel.Text = stream.displayName + " is now OFFLINE";
+                        stream.MyLabel.ForeColor = Color.Red;
                     }
                     i++;
                 }
@@ -138,6 +171,14 @@ namespace ProjetTwitch
         {
             System.Diagnostics.Process.Start(streamerTmpNotif.link);
         }
+        
+        private void MyLabel_MouseClick(object sender, MouseEventArgs e)
+        {
+            Label clickedLabel = (Label)sender;
 
+            streamer clickedStreamer = followedStreams.Find(r => r.MyLabel == clickedLabel);
+            
+            System.Diagnostics.Process.Start(clickedStreamer.link);
+        }
     }
 }

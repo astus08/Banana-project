@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace projetTwitch
 {
@@ -109,7 +110,8 @@ namespace projetTwitch
         public bool stateHasChanged { get; set; }
         public string link { get; set; }
         public Image logo { get; set; }
-
+        private Label myLabel = new Label();
+        
         public bool State{
             get {
                 return state;
@@ -122,7 +124,17 @@ namespace projetTwitch
                 state = value;
             }
         }
-        
+
+        public Label MyLabel
+        {
+            get {
+                return myLabel;
+            }
+            set {
+                myLabel = value;
+            }
+        }
+
         public streamer(String name, String displayName, String link, String logo)
         {
             this.name = name;
@@ -130,6 +142,8 @@ namespace projetTwitch
             this.state = true;
             this.stateHasChanged = false;
             this.link = link;
+
+            myLabel.Name = name + "Label";
 
             //Load logo
             using (WebClient webClient = new WebClient())
